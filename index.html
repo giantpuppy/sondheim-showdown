@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sondheim Showdown · 桑德海姆曲目淘汰赛</title>
+<title>Sondheim Showdown · 桑德海姆音乐剧淘汰赛</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,700;1,500;1,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
@@ -17,13 +17,13 @@ body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% -10%,#
 main{max-width:860px;margin:0 auto;padding:28px 18px 60px}
 h1,.card h2,.champ .t{text-wrap:balance}
 .sub,.card p{text-wrap:pretty}
-.lab,.show small,#cnt{font-variant-numeric:tabular-nums}
+.lab{font-variant-numeric:tabular-nums}
 h1{font:italic 700 clamp(38px,9vw,68px)/1.05 var(--serif);margin:12px 0 6px;letter-spacing:-.01em}
 .sub{color:var(--mute);margin:0 0 26px}
 .hide{display:none!important}
 .row.mid{justify-content:center}
 button{font:inherit;cursor:pointer;color:var(--ink)}
-button:focus-visible,.show:focus-visible,.card:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+button:focus-visible,.card:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;background:var(--brass);color:#2a1408;border:0;padding:10px 22px;font-weight:600;border-radius:2px;transition:transform .15s,filter .15s,background .15s,border-color .15s}
 .btn:not([disabled]):hover{filter:brightness(1.08);transform:translateY(-1px)}
 .btn:not([disabled]):active{transform:translateY(0) scale(.97)}
@@ -32,13 +32,6 @@ button:focus-visible,.show:focus-visible,.card:focus-visible{outline:2px solid v
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--brass);padding:9px 21px}
 .btn[disabled]{opacity:.4;cursor:not-allowed}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
-.shows{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.show{min-height:56px;text-align:left;background:var(--bg2);border:1px solid #4b2a33;border-left:4px solid #4b2a33;padding:10px 12px;border-radius:2px;transition:border-color .2s,background .2s,transform .15s}
-.show b{display:block;font:600 17px/1.3 var(--serif)}
-.show small{color:var(--mute)}
-.show:hover{border-color:#8a6d36}
-.show:active{transform:scale(.98)}
-.show[aria-pressed=true]{border-color:var(--brass);background:#3a1622}
 .bar{height:4px;background:#4b2a33;margin:10px 0 6px}
 .bar i{display:block;height:100%;background:var(--brass);width:0;transition:width .4s}
 .lab{display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
@@ -70,13 +63,8 @@ details{margin-top:22px;color:var(--mute)}
 <main>
 <section id="start">
  <h1>Sondheim Showdown</h1>
- <p class="sub">桑德海姆哪首曲子才是你的冠军？选剧目，逐场二选一，决出你的第一名。</p>
- <div class="row">
-  <button class="btn ghost" id="all">全选</button><button class="btn ghost" id="none">清空</button>
-  <span id="cnt" class="sub" style="margin:0"></span>
- </div>
- <div class="shows" id="shows"></div>
- <div class="row"><button class="btn" id="go"><kubai-icon class="ico" name="shuffle" size="18" trigger="parent"></kubai-icon>洗牌，开赛</button><button class="btn ghost hide" id="resume"><kubai-icon class="ico" name="play" size="18" trigger="parent"></kubai-icon>继续上次比赛</button></div>
+ <p class="sub">12 部桑德海姆音乐剧，逐场二选一，决出你心中的第一名。</p>
+ <div class="row"><button class="btn" id="go"><kubai-icon class="ico" name="shuffle" size="18" trigger="parent"></kubai-icon>开始</button><button class="btn ghost hide" id="resume"><kubai-icon class="ico" name="play" size="18" trigger="parent"></kubai-icon>继续上次比赛</button></div>
 </section>
 
 <section id="battle" class="hide">
@@ -87,7 +75,7 @@ details{margin-top:22px;color:var(--mute)}
 </section>
 
 <section id="result" class="hide">
- <div class="champ"><div class="sub">你的冠军曲目</div><div class="t" id="ct"></div><div id="cs" class="sub"></div></div>
+ <div class="champ"><div class="sub">你的冠军剧目</div><div class="t" id="ct"></div><div id="cs" class="sub"></div></div>
  <div class="row" style="justify-content:center">
   <button class="btn" id="dl"><kubai-icon class="ico" name="download" size="18" trigger="parent"></kubai-icon>下载分享图</button><button class="btn ghost" id="cp"><kubai-icon class="ico" name="copy" size="18" trigger="parent"></kubai-icon>复制分享链接</button><button class="btn ghost" id="again"><kubai-icon class="ico" name="rotate-ccw" size="18" trigger="parent"></kubai-icon>重新开始</button>
  </div>
@@ -97,29 +85,34 @@ details{margin-top:22px;color:var(--mute)}
 </main>
 
 <script>
-// 剧目: [英文名, 中文名, 年份, 曲目]。TODO: 曲目可继续补充；新增曲目请追加在末尾，以保证旧分享链接不失效
-const SHOWS=[
-["A Funny Thing Happened on the Way to the Forum","",1962,["Comedy Tonight","Lovely","Everybody Ought to Have a Maid","Free","Love, I Hear","Bring Me My Bride","Impossible"]],
-["Anyone Can Whistle","",1964,["Anyone Can Whistle","Everybody Says Don't","There Won't Be Trumpets","With So Little to Be Sure Of"]],
-["Company","伙伴们",1970,["Being Alive","Getting Married Today","The Ladies Who Lunch","Another Hundred People","Side by Side by Side","Barcelona","You Could Drive a Person Crazy","Sorry-Grateful"]],
-["Follies","富丽秀",1971,["Losing My Mind","I'm Still Here","Broadway Baby","Could I Leave You?","Too Many Mornings","Waiting for the Girls Upstairs","Buddy's Blues","Beautiful Girls","Who's That Woman?"]],
-["A Little Night Music","小夜曲",1973,["Send in the Clowns","Every Day a Little Death","The Glamorous Life","A Weekend in the Country","Liaisons","Now / Later / Soon","You Must Meet My Wife","The Miller's Son"]],
-["Pacific Overtures","太平洋序曲",1976,["Someone in a Tree","Pretty Lady","Please Hello","A Bowler Hat","Poems","Next"]],
-["Sweeney Todd","理发师陶德",1979,["Epiphany","Pretty Women","Johanna","A Little Priest","Not While I'm Around","By the Sea","The Ballad of Sweeney Todd","Green Finch and Linnet Bird","My Friends","The Worst Pies in London"]],
-["Merrily We Roll Along","",1981,["Not a Day Goes By","Our Time","Old Friends","Good Thing Going","Franklin Shepard, Inc.","Opening Doors","Like It Was","Now You Know"]],
-["Sunday in the Park with George","星期天与乔治同游公园",1984,["Finishing the Hat","Move On","Sunday","Putting It Together","Children and Art","Color and Light","Beautiful","We Do Not Belong Together"]],
-["Into the Woods","拜访森林",1987,["No One Is Alone","Children Will Listen","Giants in the Sky","Agony","Into the Woods","On the Steps of the Palace","Last Midnight","Stay with Me","Your Fault","It Takes Two","Any Moment"]],
-["Assassins","刺客",1990,["Everybody's Got the Right","The Ballad of Booth","Unworthy of Your Love","Gun Song","Another National Anthem","Something Just Broke","The Ballad of Czolgosz"]],
-["Passion","激情",1994,["Loving You","Happiness","I Read","Is This What You Call Love?"]]
+// 剧目包：[英文名, 中文名(可留空), 首演年份]。想增减剧目，直接改这个列表即可；
+// 新增剧目请追加在末尾，这样旧的分享链接不会失效。
+const PACK=[
+["A Funny Thing Happened on the Way to the Forum","",1962],
+["Anyone Can Whistle","",1964],
+["Company","伙伴们",1970],
+["Follies","富丽秀",1971],
+["A Little Night Music","小夜曲",1973],
+["Pacific Overtures","太平洋序曲",1976],
+["Sweeney Todd","理发师陶德",1979],
+["Merrily We Roll Along","",1981],
+["Sunday in the Park with George","星期天与乔治同游公园",1984],
+["Into the Woods","拜访森林",1987],
+["Assassins","刺客",1990],
+["Passion","激情",1994]
 ];
-const SONGS=[];SHOWS.forEach((s,i)=>s[3].forEach(t=>SONGS.push({t,s:i})));
 const $=id=>document.getElementById(id);
-const KEY="sondheim-showdown-v1";
-let sel=new Set(),order=[],picks=[]; // 首页默认不选任何剧目
+const KEY="sondheim-showdown-v2";
+let order=[],picks=[];
+
+const title=i=>PACK[i][1]||PACK[i][0];
+const sub=i=>(PACK[i][1]?PACK[i][0]+" · ":"")+PACK[i][2];
+// 对阵表长度必须是 2 的幂，且编号都在剧目包范围内（防止旧存档或坏链接）
+const valid=od=>Array.isArray(od)&&od.length>=2&&od.length<=64&&(od.length&(od.length-1))===0&&od.every(x=>Number.isInteger(x)&&x>=-1&&x<PACK.length);
 
 function show(id){["start","battle","result"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({order,picks}))}catch(e){}}
-function load(){try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));return s&&valid(s.order)?s:null}catch(e){return null}}
 
 // 开局洗牌一次(Fisher-Yates)，之后是固定对阵树；轮空(-1)补到2的幂，且轮空不会互相碰到
 function makeOrder(ids){
@@ -138,20 +131,8 @@ function sim(){let cur=order,pi=0;const R=[];
  return{R,champ:cur[0]}}
 
 const rname=n=>n===2?"决赛":n===4?"半决赛":n===8?"四分之一决赛":"Round of "+n;
-const nm=i=>SONGS[i].t, sn=i=>{const s=SHOWS[SONGS[i].s];return s[0]+(s[1]?"（"+s[1]+"）":"")+" · "+s[2]};
 
-function drawShows(){
- const box=$("shows");box.innerHTML="";
- SHOWS.forEach((s,i)=>{const b=document.createElement("button");b.className="show";b.setAttribute("aria-pressed",sel.has(i));
-  b.innerHTML="<b></b><small></small>";b.firstChild.textContent=s[1]||s[0];
-  b.lastChild.textContent=(s[1]?s[0]+" · ":"")+s[2]+" · "+s[3].length+" 首";
-  b.onclick=()=>{sel.has(i)?sel.delete(i):sel.add(i);drawShows()};box.appendChild(b)});
- const n=[...sel].reduce((t,i)=>t+SHOWS[i][3].length,0);
- $("cnt").textContent="已选 "+sel.size+" 部，共 "+n+" 首";$("go").disabled=n<4}
-
-function start(){
- const ids=SONGS.map((x,i)=>sel.has(x.s)?i:-1).filter(i=>i>=0);
- order=makeOrder(ids);picks=[];save();render()}
+function start(){order=makeOrder(PACK.map((_,i)=>i));picks=[];save();render()}
 
 function render(){
  const {R,champ}=sim();
@@ -165,47 +146,48 @@ function render(){
  [m.a,m.b].forEach((id,side)=>{
   if(side===1){const v=document.createElement("div");v.className="vs";v.textContent="vs";ar.appendChild(v)}
   const c=document.createElement("button");c.className="card";
-  c.innerHTML="<h2></h2><p></p>";c.firstChild.textContent=nm(id);c.lastChild.textContent=sn(id);
+  c.innerHTML="<h2></h2><p></p>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
   c.onclick=()=>{ar.querySelectorAll(".card").forEach(x=>{x.disabled=true;x.classList.add(x===c?"won":"lost")});
    setTimeout(()=>{picks.push(side);save();render()},matchMedia("(prefers-reduced-motion:reduce)").matches?0:450)};
   ar.appendChild(c)})}
 
 function result(R,champ){
- $("ct").textContent=nm(champ);$("cs").textContent=sn(champ);$("msg").textContent="";
+ $("ct").textContent=title(champ);$("cs").textContent=sub(champ);$("msg").textContent="";
  const box=$("recap");box.innerHTML="";
  for(let i=R.length-1;i>=0;i--){const d=document.createElement("div");d.className="rd";
   d.innerHTML="<h3></h3>";d.firstChild.textContent=rname(R[i].length*2);
   R[i].forEach(m=>{const l=document.createElement("div");
-   if(m.bye){l.textContent=nm(m.w)+"（轮空晋级）"}
-   else{const w=m.w,o=w===m.a?m.b:m.a;l.innerHTML="<b></b> 击败 <span></span>";l.firstChild.textContent=nm(w);l.lastChild.textContent=nm(o)}
+   if(m.bye){l.textContent=title(m.w)+"（轮空晋级）"}
+   else{const w=m.w,o=w===m.a?m.b:m.a;l.innerHTML="<b></b> 击败 <span></span>";l.firstChild.textContent=title(w);l.lastChild.textContent=title(o)}
    d.appendChild(l)});box.appendChild(d)}}
 
-// 分享链接：曲目顺序 + 每场选了左(0)还是右(1)，无需压缩库
-// 正式网址；在 Claude 预览等沙盒里 location 不可用，就回退到这个地址
+// 分享链接：剧目顺序 + 每场选了左(0)还是右(1)，无需压缩库
+// 正式网址；在 Claude 预览等沙盒里读不到真实网址，就回退到这个地址
 const SITE="https://giantpuppy.github.io/sondheim-showdown/";
 const base=()=>/^https?:$/.test(location.protocol)&&!/claudeusercontent|claude\.ai/.test(location.hostname)?location.origin+location.pathname:SITE;
 const link=()=>base()+"#v1|"+order.join(",")+"|"+picks.join("");
 function fromHash(){const h=location.hash;if(!h.startsWith("#v1|"))return false;
- try{const [,o,p]=h.split("|");const od=o.split(",").map(Number);
-  if(od.some(x=>!(x>=-1&&x<SONGS.length)))return false;order=od;picks=(p||"").split("").map(Number);return true}catch(e){return false}}
+ try{const [,o,p]=h.split("|");const od=o.split(",").map(Number),pk=(p||"").split("").map(Number);
+  if(!valid(od)||pk.some(x=>x!==0&&x!==1))return false;order=od;picks=pk;return true}catch(e){return false}}
 
 $("dl").onclick=()=>{
  const {R,champ}=sim(),c=document.createElement("canvas");c.width=1080;c.height=1920;const x=c.getContext("2d");
  const g=x.createRadialGradient(540,0,50,540,300,1700);g.addColorStop(0,"#4a1626");g.addColorStop(1,"#1d0a12");x.fillStyle=g;x.fillRect(0,0,1080,1920);
  x.textAlign="center";x.strokeStyle="#c9a45c";x.lineWidth=3;x.strokeRect(50,50,980,1820);
  x.fillStyle="#c9a45c";x.font="italic 700 84px 'Bodoni Moda',Georgia,serif";x.fillText("Sondheim Showdown",540,230);
- x.fillStyle="#b9a58a";x.font="36px system-ui,sans-serif";x.fillText("我的冠军曲目",540,420);
- // 冠军名过长时自动缩小字号并换行
- let fs=120,words=nm(champ).split(" "),lines;
+ x.fillStyle="#b9a58a";x.font="36px system-ui,sans-serif";x.fillText("我的冠军剧目",540,420);
+ // 冠军名过长时自动缩小字号并换行（英文按单词，中文按字）
+ const name=title(champ),cjk=/[\u4e00-\u9fff]/.test(name),words=cjk?name.split(""):name.split(" "),glue=cjk?"":" ";
+ let fs=120,lines;
  const wrap=()=>{x.font="italic 700 "+fs+"px 'Bodoni Moda',Georgia,serif";lines=[];let l="";
-  words.forEach(w=>{const t=l?l+" "+w:w;if(x.measureText(t).width>880&&l){lines.push(l);l=w}else l=t});lines.push(l)};
+  words.forEach(w=>{const t=l?l+glue+w:w;if(x.measureText(t).width>880&&l){lines.push(l);l=w}else l=t});lines.push(l)};
  wrap();while(lines.length>3&&fs>60){fs-=10;wrap()}
  x.fillStyle="#f1e6d2";lines.forEach((l,i)=>x.fillText(l,540,560+i*fs*1.1));
  let y=560+lines.length*fs*1.1+20;x.fillStyle="#c9a45c";x.font="40px system-ui,sans-serif";
- const s=SHOWS[SONGS[champ].s];x.fillText(s[0]+" · "+s[2],540,y);
+ x.fillText(sub(champ),540,y);
  y+=140;x.fillStyle="#b9a58a";x.font="34px system-ui,sans-serif";
  for(let i=R.length-1;i>=Math.max(0,R.length-4);i--){const m=R[i].find(m=>!m.bye&&(m.a===champ||m.b===champ));
-  if(!m)continue;const o=m.a===champ?m.b:m.a;let t=rname(R[i].length*2)+"：击败 "+nm(o);
+  if(!m)continue;const o=m.a===champ?m.b:m.a;let t=rname(R[i].length*2)+"：击败 "+title(o);
   while(x.measureText(t).width>900)t=t.slice(0,-2);x.fillText(t,540,y);y+=64}
  x.fillStyle="#c9a45c";x.font="30px system-ui,sans-serif";x.fillText(base().replace(/^https?:\/\//,""),540,1800);
  c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="sondheim-champion.png";a.click();$("msg").textContent="分享图已生成"})};
@@ -214,17 +196,14 @@ $("cp").onclick=async()=>{const u=link();let ok=false;
   // 备用方案：沙盒/旧浏览器里 clipboard API 可能被禁用
   try{const t=document.createElement("textarea");t.value=u;t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();ok=document.execCommand("copy");t.remove()}catch(e2){}}
  $("msg").textContent=ok?"链接已复制":"复制失败，请换个浏览器再试"};
-$("again").onclick=()=>{try{history.replaceState(null,"",location.pathname)}catch(e){}show("start");drawShows()};
-$("quit").onclick=()=>{show("start");drawShows()};
+$("again").onclick=()=>{try{history.replaceState(null,"",location.pathname)}catch(e){}show("start")};
+$("quit").onclick=()=>show("start");
 $("undo").onclick=()=>{picks.pop();save();render()};
 $("go").onclick=start;
-$("all").onclick=()=>{sel=new Set(SHOWS.map((_,i)=>i));drawShows()};
-$("none").onclick=()=>{sel.clear();drawShows()};
-$("resume").onclick=()=>{const s=load();order=s.order;picks=s.picks;render()};
+$("resume").onclick=()=>{const s=load();if(!s)return;order=s.order;picks=s.picks;render()};
 
-drawShows();
 if(fromHash()){render()}
-else{const s=load();if(s&&s.order&&s.order.length)$("resume").classList.remove("hide")}
+else if(load())$("resume").classList.remove("hide");
 </script>
 </body>
 </html>
