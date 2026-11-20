@@ -21,6 +21,7 @@ h1,.card h2,.champ .t{text-wrap:balance}
 h1{font:italic 700 clamp(38px,9vw,68px)/1.05 var(--serif);margin:12px 0 6px;letter-spacing:-.01em}
 .sub{color:var(--mute);margin:0 0 26px}
 .hide{display:none!important}
+.row.mid{justify-content:center}
 button{font:inherit;cursor:pointer;color:var(--ink)}
 button:focus-visible,.show:focus-visible,.card:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;background:var(--brass);color:#2a1408;border:0;padding:10px 22px;font-weight:600;border-radius:2px;transition:transform .15s,filter .15s,background .15s,border-color .15s}
@@ -63,7 +64,7 @@ details{margin-top:22px;color:var(--mute)}
 @media(max-width:600px){.arena{grid-template-columns:1fr;gap:8px}.card{min-height:150px}.vs{text-align:center}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/kubai-icons@0.13.1/dist/cdn/element.js" defer></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/kubai-icons@0.13.1/dist/cdn/element.js"></script>
 </head>
 <body>
 <main>
@@ -75,20 +76,20 @@ details{margin-top:22px;color:var(--mute)}
   <span id="cnt" class="sub" style="margin:0"></span>
  </div>
  <div class="shows" id="shows"></div>
- <div class="row"><button class="btn" id="go">洗牌，开赛</button><button class="btn ghost hide" id="resume">继续上次比赛</button></div>
+ <div class="row"><button class="btn" id="go"><kubai-icon class="ico" name="shuffle" size="18" trigger="parent"></kubai-icon>洗牌，开赛</button><button class="btn ghost hide" id="resume"><kubai-icon class="ico" name="play" size="18" trigger="parent"></kubai-icon>继续上次比赛</button></div>
 </section>
 
 <section id="battle" class="hide">
  <div class="lab"><span id="rname"></span><span id="rprog"></span></div>
  <div class="bar"><i id="fill"></i></div>
  <div class="arena" id="arena"></div>
- <div class="row"><button class="btn ghost" id="undo"><kubai-icon class="ico" name="arrow-left" size="18"></kubai-icon>撤销上一步</button><button class="btn ghost" id="quit">回到首页</button></div>
+ <div class="row mid"><button class="btn ghost" id="undo"><kubai-icon class="ico" name="undo" size="18" trigger="parent"></kubai-icon>撤销上一步</button><button class="btn ghost" id="quit"><kubai-icon class="ico" name="home" size="18" trigger="parent"></kubai-icon>回到首页</button></div>
 </section>
 
 <section id="result" class="hide">
  <div class="champ"><div class="sub">你的冠军曲目</div><div class="t" id="ct"></div><div id="cs" class="sub"></div></div>
  <div class="row" style="justify-content:center">
-  <button class="btn" id="dl"><kubai-icon class="ico" name="cloud-down" size="18"></kubai-icon>下载分享图</button><button class="btn ghost" id="cp"><kubai-icon class="ico" name="clipboard" size="18"></kubai-icon>复制分享链接</button><button class="btn ghost" id="again">重新开始</button>
+  <button class="btn" id="dl"><kubai-icon class="ico" name="download" size="18" trigger="parent"></kubai-icon>下载分享图</button><button class="btn ghost" id="cp"><kubai-icon class="ico" name="copy" size="18" trigger="parent"></kubai-icon>复制分享链接</button><button class="btn ghost" id="again"><kubai-icon class="ico" name="rotate-ccw" size="18" trigger="parent"></kubai-icon>重新开始</button>
  </div>
  <div class="msg" id="msg" style="text-align:center"></div>
  <details open><summary>完整赛程</summary><div id="recap"></div></details>
@@ -114,7 +115,7 @@ const SHOWS=[
 const SONGS=[];SHOWS.forEach((s,i)=>s[3].forEach(t=>SONGS.push({t,s:i})));
 const $=id=>document.getElementById(id);
 const KEY="sondheim-showdown-v1";
-let sel=new Set(SHOWS.map((_,i)=>i)),order=[],picks=[];
+let sel=new Set(),order=[],picks=[]; // 首页默认不选任何剧目
 
 function show(id){["start","battle","result"].forEach(x=>$(x).classList.toggle("hide",x!==id))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({order,picks}))}catch(e){}}
@@ -180,7 +181,10 @@ function result(R,champ){
    d.appendChild(l)});box.appendChild(d)}}
 
 // 分享链接：曲目顺序 + 每场选了左(0)还是右(1)，无需压缩库
-const link=()=>location.origin+location.pathname+"#v1|"+order.join(",")+"|"+picks.join("");
+// 正式网址；在 Claude 预览等沙盒里 location 不可用，就回退到这个地址
+const SITE="https://giantpuppy.github.io/sondheim-showdown/";
+const base=()=>/^https?:$/.test(location.protocol)&&!/claudeusercontent|claude\.ai/.test(location.hostname)?location.origin+location.pathname:SITE;
+const link=()=>base()+"#v1|"+order.join(",")+"|"+picks.join("");
 function fromHash(){const h=location.hash;if(!h.startsWith("#v1|"))return false;
  try{const [,o,p]=h.split("|");const od=o.split(",").map(Number);
   if(od.some(x=>!(x>=-1&&x<SONGS.length)))return false;order=od;picks=(p||"").split("").map(Number);return true}catch(e){return false}}
@@ -203,10 +207,14 @@ $("dl").onclick=()=>{
  for(let i=R.length-1;i>=Math.max(0,R.length-4);i--){const m=R[i].find(m=>!m.bye&&(m.a===champ||m.b===champ));
   if(!m)continue;const o=m.a===champ?m.b:m.a;let t=rname(R[i].length*2)+"：击败 "+nm(o);
   while(x.measureText(t).width>900)t=t.slice(0,-2);x.fillText(t,540,y);y+=64}
- x.fillStyle="#c9a45c";x.font="30px system-ui,sans-serif";x.fillText(location.host?location.host+location.pathname:"Sondheim Showdown",540,1800);
+ x.fillStyle="#c9a45c";x.font="30px system-ui,sans-serif";x.fillText(base().replace(/^https?:\/\//,""),540,1800);
  c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="sondheim-champion.png";a.click();$("msg").textContent="分享图已生成"})};
-$("cp").onclick=async()=>{const u=link();try{await navigator.clipboard.writeText(u);$("msg").textContent="链接已复制"}catch(e){$("msg").textContent=u}};
-$("again").onclick=()=>{history.replaceState(null,"",location.pathname);show("start");drawShows()};
+$("cp").onclick=async()=>{const u=link();let ok=false;
+ try{await navigator.clipboard.writeText(u);ok=true}catch(e){
+  // 备用方案：沙盒/旧浏览器里 clipboard API 可能被禁用
+  try{const t=document.createElement("textarea");t.value=u;t.style.cssText="position:fixed;opacity:0";document.body.appendChild(t);t.select();ok=document.execCommand("copy");t.remove()}catch(e2){}}
+ $("msg").textContent=ok?"链接已复制":"复制失败，请换个浏览器再试"};
+$("again").onclick=()=>{try{history.replaceState(null,"",location.pathname)}catch(e){}show("start");drawShows()};
 $("quit").onclick=()=>{show("start");drawShows()};
 $("undo").onclick=()=>{picks.pop();save();render()};
 $("go").onclick=start;
