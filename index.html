@@ -8,54 +8,91 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,500;0,700;1,500;1,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#1d0a12;--bg2:#2b1019;--ink:#f1e6d2;--mute:#b9a58a;--brass:#c9a45c;--rose:#8c2f45;
+:root{--bg:#1d0a12;--bg2:#2b1019;--ink:#f1e6d2;--mute:#b9a58a;--brass:#c9a45c;--line:#4b2a33;
+ --paper-ink:#2a1408;--paper-mute:#6b4a3a;
  --serif:"Bodoni Moda","Didot",Georgia,serif;--sans:"Figtree",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+ /* 间距：4/8 点网格；字号：14/16/18/24/32 */
+ --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;
+ --t-sm:14px;--t-md:16px;--t-lg:18px;--t-xl:24px;--t-2xl:32px;
+ --ease:cubic-bezier(.2,.7,.2,1);--stub:56px;
+ --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .28 0 0 0 0 .16 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
  color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% -10%,#4a1626 0%,var(--bg) 60%) fixed;color:var(--ink);font:16px/1.6 var(--sans)}
-main{max-width:860px;margin:0 auto;padding:28px 18px 60px}
-h1,.card h2,.champ .t{text-wrap:balance}
+body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% -10%,#4a1626 0%,var(--bg) 60%) fixed;color:var(--ink);font:var(--t-md)/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+/* 极淡的幕布竖纹 */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(90deg,rgb(255 255 255/.014) 0 18px,rgb(0 0 0/.05) 18px 36px)}
+main{max-width:860px;margin:0 auto;padding:var(--s7) var(--s4) 64px}
+h1{font:italic 700 clamp(40px,9vw,68px)/1.05 var(--serif);letter-spacing:-.01em;margin:0 0 var(--s3);text-shadow:0 2px 24px rgb(201 164 92/.18)}
+h1,.card h2{text-wrap:balance}
 .sub,.card p{text-wrap:pretty}
+.sub{color:var(--mute);margin:0 0 var(--s6);max-width:36em}
 .lab{font-variant-numeric:tabular-nums}
-h1{font:italic 700 clamp(38px,9vw,68px)/1.05 var(--serif);margin:12px 0 6px;letter-spacing:-.01em}
-.sub{color:var(--mute);margin:0 0 26px}
 .hide{display:none!important}
+button{font:inherit;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.row{display:flex;gap:var(--s3);flex-wrap:wrap;align-items:center;margin:var(--s5) 0}
 .row.mid{justify-content:center}
-button{font:inherit;cursor:pointer;color:var(--ink)}
-button:focus-visible,.card:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;background:var(--brass);color:#2a1408;border:0;padding:10px 22px;font-weight:600;border-radius:2px;transition:transform .15s,filter .15s,background .15s,border-color .15s}
-.btn:not([disabled]):hover{filter:brightness(1.08);transform:translateY(-1px)}
-.btn:not([disabled]):active{transform:translateY(0) scale(.97)}
-.btn.ghost:not([disabled]):hover{background:#3a1622;filter:none}
-.ico{width:18px;height:18px;flex:none;display:inline-block}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--brass);padding:9px 21px}
+
+/* 按钮：金属质感的主按钮 + 描边次按钮；图标侧少 2px 内边距做视觉对齐 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);min-height:44px;padding:10px 22px 10px 20px;
+ font-weight:600;border-radius:4px;border:1px solid transparent;color:var(--paper-ink);
+ background:linear-gradient(180deg,#d8b76f,#bf9850);
+ box-shadow:inset 0 1px 0 rgb(255 255 255/.4),0 1px 1px rgb(0 0 0/.35),0 6px 14px rgb(0 0 0/.28);
+ transition:transform .15s var(--ease),filter .15s var(--ease),box-shadow .15s var(--ease),background-color .15s}
+.btn.ghost{color:var(--ink);background:rgb(255 255 255/.02);border-color:var(--brass);padding:10px 22px 10px 20px;
+ box-shadow:inset 0 1px 0 rgb(255 255 255/.06),0 4px 10px rgb(0 0 0/.2)}
 .btn[disabled]{opacity:.4;cursor:not-allowed}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px 0}
-.bar{height:4px;background:#4b2a33;margin:10px 0 6px}
-.bar i{display:block;height:100%;background:var(--brass);width:0;transition:width .4s}
-.lab{display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
-.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch;margin:28px 0}
-.vs{align-self:center;font:italic 500 22px var(--serif);color:var(--brass)}
-.card{position:relative;min-height:220px;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:26px 20px;background:var(--ink);color:#2a1408;border:0;border-radius:2px;transition:transform .25s,opacity .35s,background .35s,filter .2s;
- -webkit-mask:radial-gradient(circle 11px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
- mask:radial-gradient(circle 11px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
-.card:not(:disabled):hover{transform:translateY(-4px);filter:brightness(1.05)}
-.card:not(:disabled):active{transform:translateY(-1px) scale(.98)}
-.card:disabled{cursor:default}
-.card h2{font:italic 700 clamp(24px,5vw,32px)/1.15 var(--serif);margin:0 0 10px}
-.card p{margin:0;font-size:14px;color:#6b4a3a}
-.card.won{background:var(--brass);transform:scale(1.04)}
+.btn:not([disabled]):active{transform:translateY(1px) scale(.97);filter:brightness(.96);box-shadow:inset 0 1px 2px rgb(0 0 0/.25)}
+.ico{width:18px;height:18px;flex:none;display:inline-block}
+
+/* 进度条 */
+.bar{height:6px;border-radius:3px;background:rgb(0 0 0/.35);box-shadow:inset 0 1px 2px rgb(0 0 0/.5);margin:var(--s3) 0 var(--s2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#b88f45,#e0bf72);transition:width .4s var(--ease)}
+.lab{display:flex;justify-content:space-between;color:var(--mute);font-size:var(--t-sm)}
+
+/* 纸质戏票：纸纹噪点 + 老化渐变 + 虚线撕口 + 两侧缺口；阴影放在外层，避免被缺口遮罩裁掉 */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:var(--s4);align-items:stretch;margin:var(--s6) 0}
+.vs{align-self:center;font:italic 500 var(--t-xl) var(--serif);color:var(--brass)}
+.tk{display:flex;filter:drop-shadow(0 1px 1px rgb(0 0 0/.4)) drop-shadow(0 14px 20px rgb(0 0 0/.35));animation:tkin .3s var(--ease) both}
+.tk:nth-child(3){animation-delay:.07s}
+.tk:has(.card:focus-visible){outline:2px solid var(--brass);outline-offset:6px;border-radius:4px}
+@keyframes tkin{from{opacity:0;transform:translateY(10px)}}
+.card{flex:1;position:relative;min-height:232px;display:flex;flex-direction:column;padding:0;border:0;border-radius:3px;text-align:center;color:var(--paper-ink);
+ background:var(--noise),radial-gradient(120% 90% at 50% 38%,#f8efdc 0%,#efe1c3 68%,#e2cfa8 100%);
+ box-shadow:inset 0 0 0 1px rgb(120 80 40/.22),inset 0 0 36px rgb(120 80 40/.16);
+ transition:transform .22s var(--ease),opacity .35s var(--ease),filter .2s;
+ -webkit-mask:radial-gradient(circle 11px at 0 calc(100% - var(--stub)),#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% calc(100% - var(--stub)),#0000 98%,#000) right/51% 100% no-repeat;
+ mask:radial-gradient(circle 11px at 0 calc(100% - var(--stub)),#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 11px at 100% calc(100% - var(--stub)),#0000 98%,#000) right/51% 100% no-repeat}
+.card h2{flex:1;display:flex;align-items:center;justify-content:center;margin:0;padding:var(--s5) var(--s5) var(--s4);font:italic 700 clamp(24px,5vw,var(--t-2xl))/1.15 var(--serif)}
+.card p{margin:0;min-height:var(--stub);display:flex;align-items:center;justify-content:center;padding:0 var(--s5);border-top:2px dashed rgb(107 74 58/.45);font-size:var(--t-sm);letter-spacing:.02em;color:var(--paper-mute)}
+button.card:disabled{cursor:default}
+button.card:not(:disabled):active{transform:translateY(-1px) scale(.985)}
+.card.won{transform:scale(1.04);background:var(--noise),linear-gradient(180deg,#e6c77c,#c9a45c)}
 .card.lost{opacity:0;transform:scale(.92)}
-.champ{text-align:center;margin:22px 0}
-.champ .t{font:italic 700 clamp(36px,9vw,64px)/1.1 var(--serif);color:var(--brass);margin:6px 0}
-.rd{margin:18px 0}.rd h3{font:600 18px var(--serif);margin:0 0 6px;color:var(--brass)}
-.rd div{font-size:15px;color:var(--mute);padding:3px 0;border-bottom:1px solid #3a1d27}
+
+/* 冠军票 */
+.champ{text-align:center;margin:var(--s5) 0}
+.champ>.sub{margin:0 auto}
+.final{max-width:520px;margin:var(--s4) auto 0;animation-duration:.45s}
+.final .card{min-height:200px;background:var(--noise),linear-gradient(180deg,#ecd08b,#c9a45c);cursor:default}
+.final .card h2{font-size:clamp(28px,7vw,44px)}
+.final .card p{border-top-color:rgb(42 20 8/.4);color:#4a2f1d}
+
+.rd{margin:var(--s5) 0}.rd h3{font:600 var(--t-lg) var(--serif);margin:0 0 var(--s2);color:var(--brass)}
+.rd div{font-size:15px;color:var(--mute);padding:var(--s1) 0;border-bottom:1px solid #3a1d27}
 .rd div b{color:var(--ink)}
-details{margin-top:22px;color:var(--mute)}
+details{margin-top:var(--s5);color:var(--mute)}
 .msg{color:var(--brass);min-height:1.5em}
-@media(max-width:600px){.arena{grid-template-columns:1fr;gap:8px}.card{min-height:150px}.vs{text-align:center}}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 悬停效果只用于支持悬停的设备，避免触屏上"粘住" */
+@media (hover:hover){
+ .btn:not([disabled]):hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgb(255 255 255/.4),0 1px 1px rgb(0 0 0/.35),0 10px 18px rgb(0 0 0/.32)}
+ .btn.ghost:not([disabled]):hover{background:#3a1622;filter:none}
+ button.card:not(:disabled):hover{transform:translateY(-5px);filter:brightness(1.04)}
+}
+@media(max-width:600px){.arena{grid-template-columns:1fr;gap:var(--s2)}.card{min-height:176px}.vs{text-align:center}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
 </style>
 <script type="module" src="https://cdn.jsdelivr.net/npm/kubai-icons@0.13.1/dist/cdn/element.js"></script>
 </head>
@@ -75,7 +112,7 @@ details{margin-top:22px;color:var(--mute)}
 </section>
 
 <section id="result" class="hide">
- <div class="champ"><div class="sub">你的冠军剧目</div><div class="t" id="ct"></div><div id="cs" class="sub"></div></div>
+ <div class="champ"><div class="sub">你的冠军剧目</div><div class="tk final"><div class="card"><h2 id="ct"></h2><p id="cs"></p></div></div></div>
  <div class="row" style="justify-content:center">
   <button class="btn" id="dl"><kubai-icon class="ico" name="download" size="18" trigger="parent"></kubai-icon>下载分享图</button><button class="btn ghost" id="cp"><kubai-icon class="ico" name="copy" size="18" trigger="parent"></kubai-icon>复制分享链接</button><button class="btn ghost" id="again"><kubai-icon class="ico" name="rotate-ccw" size="18" trigger="parent"></kubai-icon>重新开始</button>
  </div>
@@ -149,7 +186,7 @@ function render(){
   c.innerHTML="<h2></h2><p></p>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
   c.onclick=()=>{ar.querySelectorAll(".card").forEach(x=>{x.disabled=true;x.classList.add(x===c?"won":"lost")});
    setTimeout(()=>{picks.push(side);save();render()},matchMedia("(prefers-reduced-motion:reduce)").matches?0:450)};
-  ar.appendChild(c)})}
+  const w=document.createElement("div");w.className="tk";w.appendChild(c);ar.appendChild(w)})}
 
 function result(R,champ){
  $("ct").textContent=title(champ);$("cs").textContent=sub(champ);$("msg").textContent="";
