@@ -11,7 +11,7 @@
 <script type="module" src="https://cdn.jsdelivr.net/npm/kubai-icons@0.13.1/dist/cdn/element.js"></script>
 <style>
 /* Hallmark · shape: single-screen tournament (start field, two-up battle, champion poster) · genre: editorial · theme: Carnival (deal 1/3, seed one-page-tournament-game-where-9669·1c1b7959·2026-11-21·r0) · redesign: full
- * hero: Ledge (oxblood field, the type sits low on purpose over a halftone corner) · nav: none (one-screen game) · footer: none · imagery: none · signature: the two options as flat mustard and oxblood posters with hard ink shadows · carnival: cold-snap
+ * hero: Stage (oxblood field, centred type over a halftone corner) · nav: none (one-screen game) · footer: none · imagery: none · signature: the two options as flat mustard and oxblood posters with hard ink shadows · carnival: cold-snap
  * axes: light/display-heavy/chromatic-yellow · posture: full-palette · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · dropped #n · the old paper-noise SVG filter id; the paper texture was replaced by flat Carnival fills */
 /* Hallmark · pre-emit critique: P4 H4 E3 S4 R4 V4 · weakest: E, motion kept to colour swaps and the 1px press; the old lift and entrance animation were removed */
@@ -77,16 +77,16 @@ button, input, select, textarea { font: inherit; }
 .btn:not([disabled]):active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--color-ink)}
 .ico{width:20px;height:20px;flex:none;display:inline-block}
 .row{display:flex;gap:var(--space-md);flex-wrap:wrap;justify-content:center;margin-block:var(--space-xl)}
-.row.start{justify-content:flex-start;margin-block:var(--space-xl) 0}
+.row.start{justify-content:center;margin-block:var(--space-2xl) 0}
 
 /* 开始页：深红色场 + 海报大字 */
-#start{position:relative;overflow:clip;min-height:100svh;display:grid;align-content:end;padding-block:var(--space-2xl)}
-#start h1{max-width:none;font-size:clamp(4rem,12vw,11rem);line-height:1;text-transform:uppercase}
-#start .lead{margin-top:var(--space-lg);font-size:var(--text-title)}
+#start{position:relative;overflow:clip;min-height:100svh;display:grid;align-content:center;padding-block:var(--space-2xl);text-align:center}
+#start h1{max-width:none;margin-inline:auto;font-size:clamp(3rem,min(15vw,21svh),11rem);line-height:1;text-transform:uppercase}
+#start .lead{margin:var(--space-xl) auto 0;max-width:28ch;font-size:var(--text-section)}
 #start::after{content:"";position:absolute;right:0;bottom:0;width:min(44vw,420px);aspect-ratio:1;pointer-events:none;
  background-image:radial-gradient(var(--color-ink) 1.5px,transparent 1.5px);background-size:12px 12px;
  -webkit-mask-image:linear-gradient(315deg,var(--color-ink),transparent 70%);mask-image:linear-gradient(315deg,var(--color-ink),transparent 70%)}
-#start .container{position:relative;z-index:var(--z-base)}
+#start .container{position:relative;z-index:var(--z-base);min-width:0;width:100%}
 
 /* 比赛页 */
 #battle{padding-block:var(--space-xl) var(--space-2xl)}
@@ -104,6 +104,9 @@ button, input, select, textarea { font: inherit; }
 .arena>.card:last-child{background:var(--color-accent-2);color:var(--color-paper)}
 .card .t{flex:1;padding:var(--space-lg);font:var(--display-weight) var(--text-display-s)/1 var(--font-display);letter-spacing:var(--tracking-display);text-transform:uppercase;overflow-wrap:break-word;min-width:0;text-wrap:balance}
 .card .ic{flex:1;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 var(--space-lg) var(--space-md)}
+.card .ic kubai-icon{animation:bob 3.4s var(--ease-out) infinite alternate}
+.arena>.card:last-child .ic kubai-icon{animation-delay:-1.7s}
+@keyframes bob{to{transform:translateY(-8px) rotate(-4deg)}}
 .card .s{padding:var(--space-sm) var(--space-lg);border-top:var(--rule-bar) solid currentColor;font-size:var(--text-sm);font-weight:500}
 .card:not(:disabled):active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--color-ink)}
 .card:disabled{cursor:default}
@@ -143,14 +146,13 @@ details summary{font:var(--display-weight) var(--text-section)/1 var(--font-disp
  .arena{flex:1;min-height:0;margin-block:var(--space-md);gap:var(--space-xs)}
  .arena>.card{min-height:0;container-type:size}
  .row{margin-block:0}
- .card .t{flex:1;padding:var(--space-sm) var(--space-md);font-size:clamp(1rem,min(8.5cqw,11cqh),2.75rem)}
- .arena>.card{position:relative}
- .card .s{min-height:44px;padding:var(--space-xs) var(--space-2xl) var(--space-xs) var(--space-md);display:flex;align-items:center}
- /* 卡片较矮时，图标收进底部的票根行；卡片够高时再放大放在空白处 */
- .card .ic{position:absolute;right:var(--space-md);bottom:7px;padding:0;overflow:visible}
+ .card .t{flex:none;padding:var(--space-sm) var(--space-md);font-size:clamp(1rem,min(8.5cqw,11cqh),2.75rem)}
+ .card .s{min-height:44px;padding:var(--space-xs) var(--space-md);display:flex;align-items:center}
+ .card .ic{min-height:0;overflow:hidden;padding:0 var(--space-md) var(--space-sm)}
 }
 
 @media (max-width:40rem){.arena{grid-template-rows:1fr auto 1fr}}
+@media (max-height:760px){#start{padding-block:var(--space-lg)}#start .lead{margin-top:var(--space-md);font-size:var(--text-title)}.row.start{margin-top:var(--space-lg)}}
 @media (max-height:640px){#start{padding-block:var(--space-lg)}#start h1{font-size:clamp(3rem,min(12vw,18svh),11rem)}}
 @media (max-width:40rem){.champ-ic{display:none}.arena{grid-template-columns:1fr}.vs{text-align:center}.rd div{flex-direction:column;gap:0}.rd div span{text-align:left}}
 </style>
@@ -236,6 +238,13 @@ function sim(){let cur=order,pi=0;const R=[];
  return{R,champ:cur[0]}}
 
 const COMPACT=matchMedia("(max-width:40rem),(max-height:860px)");
+// 紧凑布局下，让图标撑满卡片里的空白区域（图标组件只认 size 属性）；放不下就隐藏
+function fitIcons(){if(!COMPACT.matches)return;
+ document.querySelectorAll("#arena .card .ic").forEach(ic=>{const k=ic.firstElementChild;if(!k)return;
+  const cs=getComputedStyle(ic),avail=ic.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  const sz=Math.floor(Math.min(avail,ic.clientWidth*0.5,176));
+  if(sz<40)ic.style.visibility="hidden";else{ic.style.visibility="";if(k.getAttribute("size")!=String(sz))k.setAttribute("size",sz)}})}
+let fitT;addEventListener("resize",()=>{clearTimeout(fitT);fitT=setTimeout(fitIcons,120)});
 const rname=n=>n===2?"Final":n===4?"Semi-finals":n===8?"Quarter-finals":"Round of "+n;
 
 function start(){order=makeOrder(PACK.map((_,i)=>i));picks=[];save();render()}
@@ -251,11 +260,11 @@ function render(){
  const ar=$("arena");ar.innerHTML="";
  [m.a,m.b].forEach((id,side)=>{
   if(side===1){const v=document.createElement("div");v.className="vs";v.textContent="vs";ar.appendChild(v)}
-  const c=document.createElement("button");c.className="card";
-  c.innerHTML="<span class=\"t\"></span><span class=\"ic\"><kubai-icon name=\""+PACK[id][3]+"\" size=\""+(COMPACT.matches?30:112)+"\" trigger=\"parent\"></kubai-icon></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
+  const c=document.createElement("button");c.className="card";c.setAttribute("data-kubai-trigger","");
+  c.innerHTML="<span class=\"t\"></span><span class=\"ic\"><kubai-icon name=\""+PACK[id][3]+"\" size=\""+(COMPACT.matches?72:112)+"\" trigger=\"parent\"></kubai-icon></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
   c.onclick=()=>{ar.querySelectorAll("button").forEach(x=>{x.disabled=true;x.classList.add(x===c?"won":"lost")});
    setTimeout(()=>{picks.push(side);save();render()},matchMedia("(prefers-reduced-motion:reduce)").matches?0:450)};
-  ar.appendChild(c)})}
+  ar.appendChild(c)});requestAnimationFrame(fitIcons)}
 
 function result(R,champ){
  $("cic").innerHTML="<kubai-icon name=\""+PACK[champ][3]+"\" size=\"160\"></kubai-icon>";$("ct").textContent=title(champ);$("cs").textContent=sub(champ);$("msg").textContent="";
@@ -276,36 +285,42 @@ function fromHash(){const h=location.hash;if(!h.startsWith("#v1|"))return false;
  try{const [,o,p]=h.split("|");const od=o.split(",").map(Number),pk=(p||"").split("").map(Number);
   if(!valid(od)||pk.some(x=>x!==0&&x!==1))return false;order=od;picks=pk;return true}catch(e){return false}}
 
-$("dl").onclick=()=>{
- const {R,champ}=sim(),c=document.createElement("canvas");c.width=1080;c.height=1920;const x=c.getContext("2d");
+$("dl").onclick=async()=>{
+ const {R,champ}=sim(),c=document.createElement("canvas"),W=1080,H=1920,CX=W/2;c.width=W;c.height=H;const x=c.getContext("2d");
  // 颜色和字体都从页面的 CSS 变量里读，保持和网页一致
  const v=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
  const paper=v("--color-paper"),ink=v("--color-ink"),acc=v("--color-accent"),acc2=v("--color-accent-2"),disp=v("--font-display"),body=v("--font-body");
- x.fillStyle=paper;x.fillRect(0,0,1080,1920);
- x.fillStyle=acc2;x.fillRect(0,0,1080,500);
- x.fillStyle=paper;x.textAlign="left";
- x.font="800 190px "+disp;x.fillText("SONDHEIM",90,260);x.fillText("SHOWDOWN.",90,450);
- // 冠军票：硬阴影 + 墨色描边
- const bx=90,by=600,bw=900,bh=620;
- x.fillStyle=ink;x.fillRect(bx+18,by+18,bw,bh);
- x.fillStyle=acc;x.fillRect(bx,by,bw,bh);
- x.strokeStyle=ink;x.lineWidth=8;x.strokeRect(bx,by,bw,bh);
- x.fillStyle=ink;x.font="500 40px "+body;x.fillText("My champion musical",bx+50,by+90);
- // 冠军名过长时自动缩小字号并换行（英文按单词，中文按字）
+ try{await document.fonts.load('800 100px "Big Shoulders Display"');await document.fonts.load('500 40px "Golos Text"')}catch(e){}
+ x.textAlign="center";x.textBaseline="alphabetic";
+ x.fillStyle=paper;x.fillRect(0,0,W,H);
+ // 顶部标题带：整体居中，字号自动适配宽度
+ const bandH=540;x.fillStyle=acc2;x.fillRect(0,0,W,bandH);
+ let hs=210;const setH=()=>x.font="800 "+hs+"px "+disp;setH();
+ while(Math.max(x.measureText("SONDHEIM").width,x.measureText("SHOWDOWN.").width)>900&&hs>80){hs-=6;setH()}
+ x.fillStyle=paper;const y1=bandH/2-hs*0.06;x.fillText("SONDHEIM",CX,y1);x.fillText("SHOWDOWN.",CX,y1+hs*0.98);
+ // 冠军票：高度跟内容走，名字长就缩字号（英文按单词、中文按字换行）
+ const bx=90,bw=900,pad=56,iw=bw-pad*2;
  const raw=title(champ),cjk=/[\u4e00-\u9fff]/.test(raw),name=cjk?raw:raw.toUpperCase(),words=cjk?name.split(""):name.split(" "),glue=cjk?"":" ";
- let fs=200,lines;
+ let fs=230,lines;
  const wrap=()=>{x.font="800 "+fs+"px "+disp;lines=[];let l="";
-  words.forEach(w=>{const t=l?l+glue+w:w;if(x.measureText(t).width>bw-100&&l){lines.push(l);l=w}else l=t});lines.push(l)};
- wrap();while(lines.length>3&&fs>70){fs-=10;wrap()}
- x.fillStyle=ink;lines.forEach((l,i)=>x.fillText(l,bx+50,by+120+fs*0.95*(i+1)));
- x.font="500 40px "+body;x.fillText(sub(champ),bx+50,by+bh-50);
- // 简要赛程
- let y=1350;x.font="500 38px "+body;
- for(let i=R.length-1;i>=Math.max(0,R.length-4);i--){const m=R[i].find(m=>!m.bye&&(m.a===champ||m.b===champ));
-  if(!m)continue;const o=m.a===champ?m.b:m.a;let t=rname(R[i].length*2)+": beat "+title(o);
-  while(x.measureText(t).width>900)t=t.slice(0,-2);x.fillText(t,90,y);y+=62}
- x.fillStyle=acc2;x.fillRect(90,1740,900,8);
- x.fillStyle=ink;x.font="500 32px "+body;x.fillText(base().replace(/^https?:\/\//,""),90,1810);
+  words.forEach(w=>{const t=l?l+glue+w:w;if(x.measureText(t).width>iw&&l){lines.push(l);l=w}else l=t});lines.push(l)};
+ wrap();while((lines.length>3||lines.length*fs>520)&&fs>70){fs-=6;wrap()}
+ const lh=fs*0.98,bh=pad+38+44+lines.length*lh+40+44+pad;
+ // 赛程摘要（最多 4 行）
+ const beats=[];for(let i=R.length-1;i>=Math.max(0,R.length-4);i--){const m=R[i].find(m=>!m.bye&&(m.a===champ||m.b===champ));
+  if(m)beats.push(rname(R[i].length*2)+": beat "+title(m.a===champ?m.b:m.a))}
+ const footTop=1740,beatsH=beats.length?100+beats.length*64:0,total=bh+beatsH;
+ const top=bandH+Math.max(60,(footTop-bandH-total)/2);
+ x.fillStyle=ink;x.fillRect(bx+18,top+18,bw,bh);
+ x.fillStyle=acc;x.fillRect(bx,top,bw,bh);x.strokeStyle=ink;x.lineWidth=8;x.strokeRect(bx,top,bw,bh);
+ x.fillStyle=ink;x.font="500 38px "+body;x.fillText("My champion musical",CX,top+pad+30);
+ x.font="800 "+fs+"px "+disp;const t0=top+pad+38+44;lines.forEach((l,i)=>x.fillText(l,CX,t0+i*lh+fs*0.8));
+ x.font="500 40px "+body;x.fillText(sub(champ),CX,top+bh-pad-6);
+ x.font="500 40px "+body;
+ beats.forEach((t,i)=>{while(x.measureText(t).width>900)t=t.slice(0,-2)+"…";x.fillText(t,CX,top+bh+100+i*64)});
+ // 页脚
+ x.fillStyle=acc2;x.fillRect(CX-450,footTop,900,8);
+ x.fillStyle=ink;x.font="500 34px "+body;x.fillText(base().replace(/^https?:\/\//,""),CX,1830);
  c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="sondheim-champion.png";a.click();$("msg").textContent="Image saved"})};
 $("cp").onclick=async()=>{const u=link();let ok=false;
  try{await navigator.clipboard.writeText(u);ok=true}catch(e){
