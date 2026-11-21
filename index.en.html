@@ -103,6 +103,7 @@ button, input, select, textarea { font: inherit; }
  transition:background-color var(--dur-micro) var(--ease-out),color var(--dur-micro) var(--ease-out),transform var(--dur-micro) var(--ease-out),box-shadow var(--dur-micro) var(--ease-out)}
 .arena>.card:last-child{background:var(--color-accent-2);color:var(--color-paper)}
 .card .t{flex:1;padding:var(--space-lg);font:var(--display-weight) var(--text-display-s)/1 var(--font-display);letter-spacing:var(--tracking-display);text-transform:uppercase;overflow-wrap:break-word;min-width:0;text-wrap:balance}
+.card .ic{flex:1;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 var(--space-lg) var(--space-md)}
 .card .s{padding:var(--space-sm) var(--space-lg);border-top:var(--rule-bar) solid currentColor;font-size:var(--text-sm);font-weight:500}
 .card:not(:disabled):active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--color-ink)}
 .card:disabled{cursor:default}
@@ -112,6 +113,9 @@ button, input, select, textarea { font: inherit; }
 
 /* 结果页 */
 #result .band-b{padding-block:var(--space-2xl)}
+.champ{display:flex;align-items:center;justify-content:space-between;gap:var(--space-xl)}
+.champ-t{min-width:0}
+.champ-ic{flex:none}
 .champ .label{margin-top:var(--space-md);font-size:var(--text-sm);font-weight:500}
 .champ h2{max-width:none;font-size:clamp(3.5rem,12vw,8.5rem);line-height:1;text-transform:uppercase}
 .champ .lead{margin-top:var(--space-md)}
@@ -130,7 +134,7 @@ details summary{font:var(--display-weight) var(--text-section)/1 var(--font-disp
  .btn.primary:not([disabled]):hover{background:var(--color-ink);color:var(--color-paper)}
  .card:not(:disabled):hover{background:var(--color-paper-2);color:var(--color-ink)}
 }
-@media (max-width:40rem){.arena{grid-template-columns:1fr}.vs{text-align:center}.card{min-height:220px}.rd div{flex-direction:column;gap:0}.rd div span{text-align:left}}
+@media (max-width:40rem){.champ-ic{display:none}.arena{grid-template-columns:1fr}.vs{text-align:center}.card{min-height:220px}.rd div{flex-direction:column;gap:0}.rd div span{text-align:left}}
 </style>
 </head>
 <body>
@@ -154,9 +158,10 @@ details summary{font:var(--display-weight) var(--text-section)/1 var(--font-disp
 
 <section id="result" class="hide">
  <div class="band-b"><div class="container champ">
-  <h2 id="ct"></h2>
+  <div class="champ-t"><h2 id="ct"></h2>
   <p class="lead" id="cs"></p>
-  <p class="label">Your champion musical</p>
+  <p class="label">Your champion musical</p></div>
+  <div class="champ-ic" id="cic" aria-hidden="true"></div>
  </div></div>
  <div class="container body">
   <div class="row"><button class="btn primary" id="dl"><kubai-icon class="ico" name="download" size="20" trigger="parent"></kubai-icon>Download image</button><button class="btn" id="cp"><kubai-icon class="ico" name="copy" size="20" trigger="parent"></kubai-icon>Copy share link</button><button class="btn" id="again"><kubai-icon class="ico" name="rotate-ccw" size="20" trigger="parent"></kubai-icon>Start over</button></div>
@@ -167,21 +172,21 @@ details summary{font:var(--display-weight) var(--text-section)/1 var(--font-disp
 </main>
 
 <script>
-// 剧目包：[英文名, 中文名(可留空), 首演年份]。想增减剧目，直接改这个列表即可；
+// 剧目包：[英文名, 中文名(可留空), 首演年份, 图标名]。图标来自 Kubai Icons，可在 icons.kubai.design 查名字。想增减剧目，直接改这个列表即可；
 // 新增剧目请追加在末尾，这样旧的分享链接不会失效。
 const PACK=[
-["A Funny Thing Happened on the Way to the Forum","",1962],
-["Anyone Can Whistle","",1964],
-["Company","",1970],
-["Follies","",1971],
-["A Little Night Music","",1973],
-["Pacific Overtures","",1976],
-["Sweeney Todd","",1979],
-["Merrily We Roll Along","",1981],
-["Sunday in the Park with George","",1984],
-["Into the Woods","",1987],
-["Assassins","",1990],
-["Passion","",1994]
+["A Funny Thing Happened on the Way to the Forum","",1962,"theater"],
+["Anyone Can Whistle","",1964,"whistle"],
+["Company","",1970,"cocktail"],
+["Follies","",1971,"curtains"],
+["A Little Night Music","",1973,"moon-star"],
+["Pacific Overtures","",1976,"sun"],
+["Sweeney Todd","",1979,"razor"],
+["Merrily We Roll Along","",1981,"alarm-clock"],
+["Sunday in the Park with George","",1984,"palette"],
+["Into the Woods","",1987,"tree-pine"],
+["Assassins","",1990,"target"],
+["Passion","",1994,"heart"]
 ];
 const $=id=>document.getElementById(id);
 const KEY="sondheim-showdown-v2";
@@ -228,13 +233,13 @@ function render(){
  [m.a,m.b].forEach((id,side)=>{
   if(side===1){const v=document.createElement("div");v.className="vs";v.textContent="vs";ar.appendChild(v)}
   const c=document.createElement("button");c.className="card";
-  c.innerHTML="<span class=\"t\"></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
+  c.innerHTML="<span class=\"t\"></span><span class=\"ic\"><kubai-icon name=\""+PACK[id][3]+"\" size=\"112\" trigger=\"parent\"></kubai-icon></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
   c.onclick=()=>{ar.querySelectorAll("button").forEach(x=>{x.disabled=true;x.classList.add(x===c?"won":"lost")});
    setTimeout(()=>{picks.push(side);save();render()},matchMedia("(prefers-reduced-motion:reduce)").matches?0:450)};
   ar.appendChild(c)})}
 
 function result(R,champ){
- $("ct").textContent=title(champ);$("cs").textContent=sub(champ);$("msg").textContent="";
+ $("cic").innerHTML="<kubai-icon name=\""+PACK[champ][3]+"\" size=\"160\"></kubai-icon>";$("ct").textContent=title(champ);$("cs").textContent=sub(champ);$("msg").textContent="";
  const box=$("recap");box.innerHTML="";
  for(let i=R.length-1;i>=0;i--){const d=document.createElement("div");d.className="rd";
   d.innerHTML="<h3></h3>";d.firstChild.textContent=rname(R[i].length*2);
