@@ -134,7 +134,25 @@ details summary{font:var(--display-weight) var(--text-section)/1 var(--font-disp
  .btn.primary:not([disabled]):hover{background:var(--color-ink);color:var(--color-paper)}
  .card:not(:disabled):hover{background:var(--color-paper-2);color:var(--color-ink)}
 }
-@media (max-width:40rem){.champ-ic{display:none}.arena{grid-template-columns:1fr}.vs{text-align:center}.card{min-height:220px}.rd div{flex-direction:column;gap:0}.rd div span{text-align:left}}
+/* 手机和矮屏：比赛页撑满一屏，两张卡片 + VS + 按钮不用滚动就能看全 */
+@media (max-width:40rem),(max-height:860px){
+ #battle{height:100svh;padding-block:var(--space-md);display:flex;flex-direction:column}
+ #battle>.container{flex:1;display:flex;flex-direction:column;min-height:0;width:100%}
+ .meta h2{font-size:clamp(1.5rem,6vw,2rem)}
+ .bar{height:12px}
+ .arena{flex:1;min-height:0;margin-block:var(--space-md);gap:var(--space-xs)}
+ .arena>.card{min-height:0;container-type:size}
+ .row{margin-block:0}
+ .card .t{flex:1;padding:var(--space-sm) var(--space-md);font-size:clamp(1rem,min(8.5cqw,11cqh),2.75rem)}
+ .arena>.card{position:relative}
+ .card .s{min-height:44px;padding:var(--space-xs) var(--space-2xl) var(--space-xs) var(--space-md);display:flex;align-items:center}
+ /* 卡片较矮时，图标收进底部的票根行；卡片够高时再放大放在空白处 */
+ .card .ic{position:absolute;right:var(--space-md);bottom:7px;padding:0;overflow:visible}
+}
+
+@media (max-width:40rem){.arena{grid-template-rows:1fr auto 1fr}}
+@media (max-height:640px){#start{padding-block:var(--space-lg)}#start h1{font-size:clamp(3rem,min(12vw,18svh),11rem)}}
+@media (max-width:40rem){.champ-ic{display:none}.arena{grid-template-columns:1fr}.vs{text-align:center}.rd div{flex-direction:column;gap:0}.rd div span{text-align:left}}
 </style>
 </head>
 <body>
@@ -217,6 +235,7 @@ function sim(){let cur=order,pi=0;const R=[];
   R.push(ms);if(pend)return{R,champ:null};cur=nx}
  return{R,champ:cur[0]}}
 
+const COMPACT=matchMedia("(max-width:40rem),(max-height:860px)");
 const rname=n=>n===2?"Final":n===4?"Semi-finals":n===8?"Quarter-finals":"Round of "+n;
 
 function start(){order=makeOrder(PACK.map((_,i)=>i));picks=[];save();render()}
@@ -233,7 +252,7 @@ function render(){
  [m.a,m.b].forEach((id,side)=>{
   if(side===1){const v=document.createElement("div");v.className="vs";v.textContent="vs";ar.appendChild(v)}
   const c=document.createElement("button");c.className="card";
-  c.innerHTML="<span class=\"t\"></span><span class=\"ic\"><kubai-icon name=\""+PACK[id][3]+"\" size=\"112\" trigger=\"parent\"></kubai-icon></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
+  c.innerHTML="<span class=\"t\"></span><span class=\"ic\"><kubai-icon name=\""+PACK[id][3]+"\" size=\""+(COMPACT.matches?30:112)+"\" trigger=\"parent\"></kubai-icon></span><span class=\"s\"></span>";c.firstChild.textContent=title(id);c.lastChild.textContent=sub(id);
   c.onclick=()=>{ar.querySelectorAll("button").forEach(x=>{x.disabled=true;x.classList.add(x===c?"won":"lost")});
    setTimeout(()=>{picks.push(side);save();render()},matchMedia("(prefers-reduced-motion:reduce)").matches?0:450)};
   ar.appendChild(c)})}
@@ -295,6 +314,8 @@ $("cp").onclick=async()=>{const u=link();let ok=false;
  $("msg").textContent=ok?"Link copied":"Couldn't copy. Try another browser."};
 $("again").onclick=()=>{try{history.replaceState(null,"",location.pathname)}catch(e){}show("start")};
 $("quit").onclick=()=>show("start");
+// 屏幕尺寸/横竖屏变化时重绘比赛页，让图标尺寸跟着布局走
+COMPACT.addEventListener("change",()=>{if(!$("battle").classList.contains("hide"))render()});
 $("undo").onclick=()=>{picks.pop();save();render()};
 $("go").onclick=start;
 $("resume").onclick=()=>{const s=load();if(!s)return;order=s.order;picks=s.picks;render()};
